@@ -2,7 +2,7 @@ const pool = require('./config/db');
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-
+const visaTypesRouter = require('./routes/visaTypes');
 const app = express();
 
 // Middleware
@@ -34,3 +34,6 @@ app.get('/api/test-db', async (req, res) => {
     });
   }
 })
+
+// Visa Types Route
+app.use('/api', visaTypesRouter);
