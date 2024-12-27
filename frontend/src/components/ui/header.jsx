@@ -28,9 +28,9 @@ const Header = () => {
         <div>
           <button
             onClick={toggleDarkMode}
-            className="focus:outline-none"
+            className="focus:outline-none bg-gray-300 dark:bg-slate-800"
           >
-            {isDarkMode ? '☀️' : '🌙'}
+            {isDarkMode ? '☀️' : '🌑'}
           </button>
         </div>
       </div>
