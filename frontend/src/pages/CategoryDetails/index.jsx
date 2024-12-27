@@ -3,6 +3,14 @@ import { useParams, Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import StatisticCard from './components/statisticsCard';
 import VisaList from './components/VisaList';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../../components/ui/breadcrumb"
 
 const CategoryDetails = () => {
   const { id } = useParams();
@@ -52,17 +60,19 @@ const CategoryDetails = () => {
 
   return (
     <div className="container mx-0 px-4 mt-16 py-0">
-       <div className="flex justify-between items-center mb-0">
-       <div className="flex gap-2 items-center mb-6">
-       <Link to="/" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
-          Home
-        </Link>
-        <span className="text-gray-500 dark:text-gray-400">/</span>
-        <span className="text-sm text-gray-700 dark:text-gray-200">
-          {currentCategory?.name}
-        </span>
-        </div>
-        </div>
+
+<Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/" 
+        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">Home</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbPage>{currentCategory?.name}</BreadcrumbPage>
+    </BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>
 
         <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-semibold dark:text-gray-200">
