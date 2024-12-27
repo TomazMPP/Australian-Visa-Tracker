@@ -17,21 +17,53 @@ const Home = () => {
 
     fetchCategories()
   }, [])
+  
+  const categoryDescriptions = {
+    1: "For people visiting Australia for tourism or leisure",
+    2: "For people who want to study at an Australian university or college",
+    3: "For family members and partners of Australian citizens or permanent residents",
+    4: "For people who want to work in Australia",
+    6: "Various other visa types",
+  }
 
+  const categoryEmojis = {
+    1: "🧳",
+    2: "🎓",
+    3: "👨‍👩‍👧‍👦",
+    4: "💼",
+    6: "😀",
+  }
+
+  const formatTitle = (text) => {
+    return text
+      .replace(/\band\b/gi, "&") 
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) 
+      .join(" ");
+  }
+      
   return (
-    <div>
-      <h1>Check processing times for Australian visas</h1>
-      <p>This is an unofficial website that shows the latest and historical processing times for Australian visas. The official website is a harder to use and shows only the latest processing times.</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {categories.map(category => (
-          <VisaCard
+    <div className="container mx-auto px-4 py-8">
+    <h1 className="text-4xl font-bold text-center mb-4">
+      Check processing times for Australian visas 🦘
+    </h1>
+    <p className="text-center mb-8 text-gray-600 max-w-3xl mx-auto">
+    This is an unofficial website that provides both the latest and historical Australian visa processing times in an accessible format. While the official website also includes historical data, it is less user-friendly and harder to navigate.
+    </p>
+    
+    <h2 className="text-2xl font-semibold mb-6">Visa Categories</h2>
+    
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {categories.map(category => (
+        <VisaCard
           key={category.id}
-          title={category.name}
-          description="test" />
-        ))}
-      </div>
+          title={`${categoryEmojis[category.id] || ''} ${formatTitle(category.name)}`}
+          description={categoryDescriptions[category.id]}
+        />
+      ))}
     </div>
-  )
+  </div>
+);
 }
 
 export default Home;

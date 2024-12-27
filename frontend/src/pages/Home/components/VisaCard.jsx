@@ -4,11 +4,11 @@ const VisaCard = ({ title, description }) => {
   return (
     <Card className="hover:bg-gray-100 cursor-pointer">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+      <CardTitle className="text-xl font-medium">{title}</CardTitle> 
       </CardHeader>
-      <CardContent>
-        {description}
-      </CardContent>
+      <CardContent className="text-sm text-gray-600">{description}</CardContent> 
     </Card>
   );
 };
+
+export default VisaCard;
