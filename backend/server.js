@@ -4,6 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 const visaTypesRouter = require('./routes/visaTypes');
 const processingTimesRouter = require('./routes/processingTimes')
+const categoriesRouter = require('./routes/categories')
 const app = express();
 
 // Middleware
@@ -41,3 +42,6 @@ app.use('/api', visaTypesRouter);
 
 // Processing Times Route
 app.use('/api', processingTimesRouter)
+
+// Categories Route
+app.use('/api', categoriesRouter);
