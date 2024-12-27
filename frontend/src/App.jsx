@@ -7,7 +7,7 @@ import './App.css';
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen dark:bg-gray-950">
+      <div className="min-h-screen">
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
