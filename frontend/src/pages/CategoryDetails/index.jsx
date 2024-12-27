@@ -13,13 +13,21 @@ const CategoryDetails = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [visasResponse, statsResponse, categoriesResponse] = await Promise.all([
-          api.get(`/categories/${id}/visas`),
+        const [processingTimesResponse, statsResponse, categoriesResponse] = await Promise.all([
+          api.get(`/processing-times/category/${id}`),
           api.get(`/statistics/category/${id}`),
           api.get(`/categories`)
         ]);
 
-        setVisas(visasResponse.data);
+        const mappedVisas = processingTimesResponse.data.map((visa) => ({
+          id: visa.visa_type_id,
+          visa_name: visa.visa_name,
+          stream_name: visa.stream_name,
+          percent_90: visa.percent_90,
+          code: visa.visa_name.split(' ').pop(), 
+        }));
+
+        setVisas(mappedVisas);
         setStats(statsResponse.data);
         setCategories(categoriesResponse.data)
         console.log(categories)

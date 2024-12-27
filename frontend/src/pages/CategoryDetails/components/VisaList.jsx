@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
 
 const VisaList = ({ visas = [] }) => {
   const navigate = useNavigate();
@@ -24,30 +23,33 @@ const VisaList = ({ visas = [] }) => {
       </div>
 
       <div className="bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
-        <div className="grid grid-cols-1 sm:grid-cols-3 p-4 border-b border-gray-200 dark:border-gray-800 text-sm text-gray-500 dark:text-gray-400">
+        <div className="grid grid-cols-[3fr_1.5fr_1.5fr] p-3 !gap-4 border-b border-gray-200 dark:border-gray-800 text-sm text-gray-500 dark:text-gray-400">
           <div className="text-left">Visa</div>
           <div className="text-center">90% Processing Time</div>
-          <div className="text-right">Details</div>
+          <div className="text-center">Details</div>
         </div>
 
         {visas.map((visa) => (
           <div
             key={visa.id}
-            className="grid grid-cols-1 sm:grid-cols-3 p-4 border-b border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+            className="grid grid-cols-[2fr_1fr_1fr] p-2 !gap-0 border-b border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
           >
             <div className="text-left">
-              <span className="font-medium">{visa.name}</span>
+              <span className="font-medium">
+                {visa.visa_name}
+                {visa.stream_name && ` (${visa.stream_name})`}
+              </span>
               <span className="ml-1 text-xs text-gray-500">(subclass {visa.code})</span>
             </div>
             <div className="text-center">
-              {visa.percent_90 || '-'} days
+              ~ {visa.percent_90 || '-'} days
             </div>
-            <div className="text-right">
+            <div className="text-center">
               <button
                 onClick={() => navigate(`/visa/${visa.id}`)}
-                className="flex items-center justify-end w-full sm:w-full hover:text-gray-700 hover:border-gray-700 dark:hover:text-white bg-transparent dark:hover:border-white transition-colors"
+                className="w-3/5 hover:text-gray-700 hover:border-gray-700 dark:hover:text-white bg-transparent dark:hover:border-white transition-colors !py-0"
               >
-                View <ChevronRight className="w-4 h-4 ml-1" />
+                View
               </button>
             </div>
           </div>
