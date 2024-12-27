@@ -1,23 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom'; 
+import { useParams, Link } from 'react-router-dom'; 
 import { api } from '../../services/api';
 import StatisticCard from './components/statisticsCard';
+import VisaList from './components/VisaList';
 
 const CategoryDetails = () => {
   const { id } = useParams();
   const [visas, setVisas] = useState([]);
   const [stats, setStats] = useState(null);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [visasResponse, statsResponse] = await Promise.all([
+        const [visasResponse, statsResponse, categoriesResponse] = await Promise.all([
           api.get(`/categories/${id}/visas`),
-          api.get(`/statistics/category/${id}`)
+          api.get(`/statistics/category/${id}`),
+          api.get(`/categories`)
         ]);
 
         setVisas(visasResponse.data);
         setStats(statsResponse.data);
+        setCategories(categoriesResponse.data)
+        console.log(categories)
       } catch (error) {
         console.error('Error fetching visas:', error);
       }
@@ -26,10 +31,42 @@ const CategoryDetails = () => {
     fetchData();
   }, [id]);
 
+  const currentCategory = categories.find(category => category.id === Number(id));
+  const formatTitle = (text) => {
+    return text
+      .replace(/\band\b/gi, "&") 
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) 
+      .join(" ");
+  }
+
+  const formattedTitle = currentCategory?.name ? formatTitle(currentCategory.name) : "Category Not Found";
+
   return (
-    <div className="container mx-auto px-4 py-8 mt-16">
-      <h2 className="text-3xl font-semibold mb-8 dark:text-gray-200">Interesting Statistics</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="container mx-0 px-4 mt-16 py-0">
+       <div className="flex justify-between items-center mb-0">
+       <div className="flex gap-2 items-center mb-6">
+       <Link to="/" className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+          Home
+        </Link>
+        <span className="text-gray-500 dark:text-gray-400">/</span>
+        <span className="text-sm text-gray-700 dark:text-gray-200">
+          {currentCategory?.name}
+        </span>
+        </div>
+        </div>
+
+        <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-semibold dark:text-gray-200">
+        {formattedTitle} Details
+        </h1>
+        <span className="text-sm text-gray-500 dark:text-gray-400">
+          Updated on Dec 24, 2024, GMT
+        </span>
+        </div>
+
+      <h2 className="text-xl font-semibold mb-3 dark:text-gray-200">Interesting Statistics for This Category</h2>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         <StatisticCard 
           title="Fastest 90% Processing" 
           value={stats?.fastest_90}
@@ -61,7 +98,9 @@ const CategoryDetails = () => {
           description="Typical processing time for 50% of applications" 
         />
       </div>
+      <VisaList visas={visas} />
     </div>
+   
   );
 };
 
