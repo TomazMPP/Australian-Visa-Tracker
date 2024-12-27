@@ -57,6 +57,7 @@ const Home = () => {
       {categories.map(category => (
         <VisaCard
           key={category.id}
+          id={category.id}
           title={`${categoryEmojis[category.id] || ''} ${formatTitle(category.name)}`}
           description={categoryDescriptions[category.id]}
         />
