@@ -45,6 +45,23 @@ const processingTimeController = {
         }
     },
 
+    getTimesByCategory: async (req, res) => {
+        try {
+            const { category_id } = req.params;
+            const times = await processingTime.getTimesByCategory(category_id);
+
+            if (!times || times.length === 0) {
+                return res.status(404).json({ message: 'No processing times found for this category' });
+            }
+
+
+            res.status(200).json(times);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    },
+
     postNewProcessingTime: async (req, res) => {
         try {
             const { visa_type_id, percent_50, percent_90, visa_stream_id } = req.body;

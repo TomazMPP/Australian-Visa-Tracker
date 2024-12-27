@@ -33,6 +33,23 @@ const processingTime = {
         return result.rows;
     },
 
+    getTimesByCategory: async (category_id) => {
+        const query = `
+         SELECT 
+            vt.name AS visa_name,
+            vs.name AS stream_name,
+            pt.percent_50,
+            pt.percent_90,
+            pt.collected_at
+        FROM processing_times pt
+        JOIN visa_types vt ON pt.visa_type_id = vt.id
+        LEFT JOIN visa_streams vs ON pt.visa_stream_id = vs.id
+        WHERE vt.category_id = $1
+        ORDER BY vt.name, vs.name, pt.collected_at DESC`;
+        const result = await pool.query(query, [category_id]);
+        return result.rows;
+    },
+
     postNewProcessingTime: async (visa_type_id, percent_50, percent_90, visa_stream_id = null) => {
         const query = `
             INSERT INTO processing_times 
