@@ -8,9 +8,9 @@ const categoryModel = {
     },
 
     getVisasByCategory : async (id) => {
-        const query = 'SELECT * FROM visa_categories WHERE id = $1';
+        const query = 'SELECT * FROM visa_types WHERE category_id = $1';
         const result = await pool.query(query, [id]);
-        return result.rows[0];
+        return result.rows;
     }
 };
 
