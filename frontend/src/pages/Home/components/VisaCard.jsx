@@ -5,7 +5,7 @@ const VisaCard = ({ id, title, description }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/category/${id}/visas`);
+    navigate(`/categories/${id}`);
   };
 
   return (
