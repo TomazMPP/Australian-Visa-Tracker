@@ -43,17 +43,17 @@ const Home = () => {
   }
       
   return (
-    <div className="container mx-auto px-4 py-8">
-    <h1 className="text-4xl font-bold text-center mb-4">
-      Check processing times for Australian visas 🦘
+    <div className="container mx-auto px-4 py-8 mt-16 max-w-6xl">
+    <h1 className="text-5xl font-bold text-center mb-4 dark:text-white">
+      Check processing times for Australian visas 📘
     </h1>
-    <p className="text-center mb-8 text-gray-600 max-w-3xl mx-auto">
+    <p className="text-center mb-12 dark:text-gray-400 max-w-3xl mx-auto text-lg">
     This is an unofficial website that provides both the latest and historical Australian visa processing times in an accessible format. While the official website also includes historical data, it is less user-friendly and harder to navigate.
     </p>
     
-    <h2 className="text-2xl font-semibold mb-6">Visa Categories</h2>
+    <h2 className="text-3xl font-semibold mb-8 dark:text-gray-200">Visa Categories</h2>
     
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {categories.map(category => (
         <VisaCard
           key={category.id}
