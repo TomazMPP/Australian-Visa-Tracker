@@ -1,11 +1,15 @@
-import { useState } from 'react'
-import Home from './pages/Home/index'
-import './App.css'
+import { useState } from 'react';
+import Home from './pages/Home/index';
+import Header from './components/ui/header';
+import './App.css';
 
 function App() {
   return (
-    <Home />
-  )
+    <>
+      <Header />
+      <Home />
+    </>
+  );
 }
 
-export default App
+export default App;
