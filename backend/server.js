@@ -5,6 +5,7 @@ require('dotenv').config();
 const visaTypesRouter = require('./routes/visaTypes');
 const processingTimesRouter = require('./routes/processingTimes')
 const categoriesRouter = require('./routes/categories')
+const statisticsRouter = require('./routes/statistics')
 const app = express();
 
 // Middleware
@@ -38,10 +39,13 @@ app.get('/api/test-db', async (req, res) => {
 })
 
 // Visa Types Route
-app.use('/api', visaTypesRouter);
+app.use('/api', visaTypesRouter)
 
 // Processing Times Route
 app.use('/api', processingTimesRouter)
 
 // Categories Route
-app.use('/api', categoriesRouter);
+app.use('/api', categoriesRouter)
+
+// Statistics Route
+app.use('/api', statisticsRouter)
