@@ -24,7 +24,7 @@ const CategoryDetails = () => {
           visa_name: visa.visa_name,
           stream_name: visa.stream_name,
           percent_90: visa.percent_90,
-          code: visa.visa_name.split(' ').pop(), 
+          code: visa.code, 
         }));
 
         setVisas(mappedVisas);

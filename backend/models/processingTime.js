@@ -37,6 +37,7 @@ const processingTime = {
         const query = `
          SELECT 
             vt.name AS visa_name,
+            vt.code AS code,
             vs.name AS stream_name,
             pt.percent_50,
             pt.percent_90,
