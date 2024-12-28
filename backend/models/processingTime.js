@@ -25,11 +25,12 @@ const processingTime = {
 
     getHistoryByVisaType: async (visa_type_id, visa_stream_id = null) => {
         const query = `
-            SELECT * FROM processing_times 
-            WHERE visa_type_id = $1
-            AND (visa_stream_id = $2 OR ($2 IS NULL AND visa_stream_id IS NULL))
-            ORDER BY collected_at`;
+             SELECT * FROM processing_times 
+        WHERE visa_type_id = $1
+        AND (visa_stream_id = $2 OR $2 IS NULL)
+        ORDER BY collected_at`;
         const result = await pool.query(query, [visa_type_id, visa_stream_id]);
+        console.log(result.rows)
         return result.rows;
     },
 
