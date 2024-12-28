@@ -14,30 +14,29 @@ import TimelineList from './components/TimelineList';
 
 
 const VisaDetails = () => {
-  const { id } = useParams();
+  const params = useParams();
+  const visaId = params.visaId;
+  const streamId = params?.streamId || null;
   const [visaTimes, setVisaTimes] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [visaDetailsRequest, setVisaDetails] = useState([]);
+  const [visaExtraDetails, setVisaDetails] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [processingTimesResponse, categoriesResponse, visaDetailsResponse] = await Promise.all([
-          api.get(`/processing-times/visa/${id}/history`),
-          api.get(`/categories`),
-          api.get(`/visa/${id}`),
+        const [processingTimesResponse, visaDetailsResponse] = await Promise.all([
+          api.get(`/processing-times/visa/${visaId}/history${streamId ? `?stream_id=${streamId}` : ''}`),
+          api.get(`/processing-times/visa/${visaId}${streamId ? `?stream_id=${streamId}` : ''}`)
         ]);
 
-        setVisaDetails(visaDetailsResponse);
         setVisaTimes(processingTimesResponse.data);
-        setCategories(categoriesResponse.data);
-        
+        setVisaDetails(visaDetailsResponse.data);
       } catch (error) {
         console.error('Error fetching:', error);
       }
     };
 
     fetchData();
-  }, [id]);
+  }, [visaId, streamId]);
 
   const getLatestProcessingTime = (processingTimes) => {
     if (!processingTimes || processingTimes.length === 0) return null;
@@ -50,7 +49,7 @@ const VisaDetails = () => {
   };
 
   const latestProcessingTime = getLatestProcessingTime(visaTimes);
-  const currentCategory = categories.find(category => category.id === Number(id));
+
 
   const formatTitle = (text) => {
     return text
@@ -60,8 +59,9 @@ const VisaDetails = () => {
       .join(" ");
   }
 
-  const formattedTitleCategory = currentCategory?.name ? formatTitle(currentCategory.name) : "Category Not Found";
-  const formattedVisaName = visaDetailsRequest.data?.name ? formatTitle(visaDetailsRequest.data.name) : "Visa Not Found";
+   const formattedTitleCategory = visaExtraDetails.category_name ? formatTitle(visaExtraDetails.category_name) : "Category Not Found";
+   const currentCategory = formattedTitleCategory;
+  const formattedVisaName = visaExtraDetails.visa_name ? formatTitle(visaExtraDetails.visa_name) : "Visa Not Found";
   
   return (
     <div className="container mx-auto px-8 mt-16 max-w-[1400px]">
@@ -74,11 +74,11 @@ const VisaDetails = () => {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-          <Link to={`/categories/${currentCategory?.id}`} className="text-slate-500 hover:text-slate-800">{currentCategory?.name}</Link>
+          <Link to={`/categories/${visaExtraDetails.category_id}`} className="text-slate-500 hover:text-slate-800">{currentCategory}</Link>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>{formattedVisaName}</BreadcrumbPage>
+          <BreadcrumbPage>{formattedVisaName}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -99,7 +99,7 @@ const VisaDetails = () => {
         <HistoryChart data={visaTimes} />
         <div className="mb-12 mt-8 text-left">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 mb-4 ">
-              Interpreting this data
+              Interpreting this data {formattedVisaName}
             </h3>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
               The Australian Government publishes updates to their processing times on a daily basis. However, this estimate is just the average of the processing time taken for <strong>{formattedVisaName}</strong>. The graph shows two main metrics:
