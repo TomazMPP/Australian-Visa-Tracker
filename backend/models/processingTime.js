@@ -14,11 +14,21 @@ const processingTime = {
 
     getTimesByVisaType: async (visa_type_id, visa_stream_id = null) => {
         const query = `
-            SELECT * FROM processing_times 
-            WHERE visa_type_id = $1 
-            AND (visa_stream_id = $2 OR ($2 IS NULL AND visa_stream_id IS NULL))
-            ORDER BY collected_at DESC 
-            LIMIT 1`;
+            SELECT 
+            pt.*,
+            vt.name as visa_name,
+            vt.code,
+            vs.name as stream_name,
+            c.name as category_name,
+            c.id as category_id
+        FROM processing_times pt
+        JOIN visa_types vt ON pt.visa_type_id = vt.id
+        JOIN visa_categories c ON vt.category_id = c.id
+        LEFT JOIN visa_streams vs ON pt.visa_stream_id = vs.id
+        WHERE pt.visa_type_id = $1 
+        AND (pt.visa_stream_id = $2 OR ($2 IS NULL AND pt.visa_stream_id IS NULL))
+        ORDER BY pt.collected_at DESC 
+        LIMIT 1`;
         const result = await pool.query(query, [visa_type_id, visa_stream_id]);
         return result.rows[0];
     },
@@ -40,6 +50,7 @@ const processingTime = {
                 vt.id AS visa_type_id,
                 vt.name AS visa_name,
                 vt.code AS code,
+                vs.id AS stream_id,
                 vs.name AS stream_name,
                 pt.percent_50,
                 pt.percent_90,
