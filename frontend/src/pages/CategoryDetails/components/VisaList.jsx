@@ -7,6 +7,16 @@ const VisaList = ({ visas = [] }) => {
     return text.replace(/\bvisa\b/gi, 'Visa');
   };
 
+  const handleClick = (visa) => {
+    console.log('Clicking visa:', visa); 
+    if (!visa.id) return;
+    const path = visa.stream_id 
+    ? `/visa/${visa.id}/stream/${visa.stream_id}`
+    : `/visa/${visa.id}/stream`; 
+  
+  navigate(path);
+};
+
   return (
     <div className="mt-12 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
@@ -49,7 +59,7 @@ const VisaList = ({ visas = [] }) => {
             </div>
             <div className="text-center">
               <button
-                onClick={() => navigate(`/visa/${visa.id}`)}
+                onClick={() => handleClick(visa)}
                 className="w-3/5 hover:text-gray-700 hover:border-gray-700 dark:hover:text-white bg-transparent dark:hover:border-white transition-colors !py-0"
               >
                 View
