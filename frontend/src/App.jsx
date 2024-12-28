@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home/index';
 import Header from './components/ui/header';
 import CategoryDetails from './pages/CategoryDetails';
-
+import VisaDetails from './pages/VisaDetails';
 import './App.css';
 
 function App() {
@@ -13,6 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/categories/:id" element={<CategoryDetails />} />
+          <Route path="/visa/:id" element={<VisaDetails />} />
         </Routes>
       </div>
     </BrowserRouter>
