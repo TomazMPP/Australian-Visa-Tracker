@@ -12,6 +12,16 @@ import {
   BreadcrumbSeparator,
 } from "../../components/ui/breadcrumb"
 
+const getLatestProcessingTime = (processingTimes) => {
+  if (!processingTimes || processingTimes.length === 0) return null;
+
+  const sortedTimes = [...processingTimes].sort((a, b) => 
+    new Date(b.collected_at) - new Date(a.collected_at)
+  );
+
+  return sortedTimes[0];
+};
+
 const CategoryDetails = () => {
   const { id } = useParams();
   const [visas, setVisas] = useState([]);
@@ -24,11 +34,12 @@ const CategoryDetails = () => {
         const [processingTimesResponse, statsResponse, categoriesResponse] = await Promise.all([
           api.get(`/processing-times/category/${id}`),
           api.get(`/statistics/category/${id}`),
-          api.get(`/categories`)
+          api.get(`/categories/${id}/visas`)
         ]);
 
         const mappedVisas = processingTimesResponse.data.map((visa) => ({
           id: visa.visa_type_id,
+          collected_at: visa.collected_at,
           visa_name: visa.visa_name,
           stream_name: visa.stream_name,
           percent_90: visa.percent_90,
@@ -38,16 +49,18 @@ const CategoryDetails = () => {
         setVisas(mappedVisas);
         setStats(statsResponse.data);
         setCategories(categoriesResponse.data)
-        console.log(categories)
       } catch (error) {
-        console.error('Error fetching visas:', error);
+        console.error('Error fetching:', error);
       }
     };
 
     fetchData();
   }, [id]);
 
+
+  const latestProcessingTime = getLatestProcessingTime(visas);
   const currentCategory = categories.find(category => category.id === Number(id));
+  console.log(categories)
   const formatTitle = (text) => {
     return text
       .replace(/\band\b/gi, "&") 
@@ -79,7 +92,7 @@ const CategoryDetails = () => {
         {formattedTitle} Details
         </h1>
         <span className="text-sm text-gray-500 dark:text-gray-400">
-          Updated on Dec 24, 2024, GMT
+          Updated on {latestProcessingTime ? new Date(latestProcessingTime.collected_at).toLocaleDateString('en-AU', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
         </span>
         </div>
 
