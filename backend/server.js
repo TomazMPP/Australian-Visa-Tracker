@@ -6,7 +6,6 @@ const visaTypesRouter = require('./routes/visaTypes');
 const processingTimesRouter = require('./routes/processingTimes')
 const categoriesRouter = require('./routes/categories')
 const statisticsRouter = require('./routes/statistics')
-const visaDetailsRouter = require('./routes/visaDetails')
 const app = express();
 
 // Middleware
@@ -50,6 +49,3 @@ app.use('/api', categoriesRouter)
 
 // Statistics Route
 app.use('/api', statisticsRouter)
-
-// Visa Details Route
-app.use('/api', visaDetailsRouter)
