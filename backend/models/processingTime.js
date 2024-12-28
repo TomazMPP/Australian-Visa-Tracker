@@ -30,24 +30,29 @@ const processingTime = {
         AND (visa_stream_id = $2 OR $2 IS NULL)
         ORDER BY collected_at`;
         const result = await pool.query(query, [visa_type_id, visa_stream_id]);
-        console.log(result.rows)
         return result.rows;
     },
 
     getTimesByCategory: async (category_id) => {
         const query = `
-         SELECT 
-            vt.name AS visa_name,
-            vt.code AS code,
-            vs.name AS stream_name,
-            pt.percent_50,
-            pt.percent_90,
-            pt.collected_at
-        FROM processing_times pt
-        JOIN visa_types vt ON pt.visa_type_id = vt.id
-        LEFT JOIN visa_streams vs ON pt.visa_stream_id = vs.id
-        WHERE vt.category_id = $1
-        ORDER BY vt.name, vs.name, pt.collected_at DESC`;
+          WITH latest_times AS (
+            SELECT DISTINCT ON (vt.id, COALESCE(vs.id, 0))
+                vt.id AS visa_type_id,
+                vt.name AS visa_name,
+                vt.code AS code,
+                vs.name AS stream_name,
+                pt.percent_50,
+                pt.percent_90,
+                pt.collected_at
+            FROM visa_types vt
+            LEFT JOIN visa_streams vs ON vt.id = vs.visa_type_id
+            LEFT JOIN processing_times pt ON vt.id = pt.visa_type_id
+                AND (pt.visa_stream_id = vs.id OR (vs.id IS NULL AND pt.visa_stream_id IS NULL))
+            WHERE vt.category_id = $1
+            ORDER BY vt.id, COALESCE(vs.id, 0), pt.collected_at DESC
+        )
+        SELECT * FROM latest_times
+        ORDER BY visa_name, stream_name NULLS FIRST`;
         const result = await pool.query(query, [category_id]);
         return result.rows;
     },
