@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 
 const VisaList = ({ visas = [] }) => {
   const navigate = useNavigate();
+  const capitalizeVisa = (text) => {
+    return text.replace(/\bvisa\b/gi, 'Visa');
+  };
 
   return (
     <div className="mt-12 px-4 sm:px-6 lg:px-8">
@@ -36,7 +39,7 @@ const VisaList = ({ visas = [] }) => {
           >
             <div className="text-left">
               <span className="font-medium">
-                {visa.visa_name}
+                {capitalizeVisa(visa.visa_name)}
                 {visa.stream_name && ` (${visa.stream_name})`}
               </span>
               <span className="ml-1 text-xs text-gray-500">(subclass {visa.code})</span>
