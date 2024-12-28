@@ -13,7 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/categories/:id" element={<CategoryDetails />} />
-          <Route path="/visa/:id" element={<VisaDetails />} />
+          <Route path="/visa/:visaId/stream/:streamId?" element={<VisaDetails />} />
         </Routes>
       </div>
     </BrowserRouter>
