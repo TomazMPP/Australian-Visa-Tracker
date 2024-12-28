@@ -22,33 +22,44 @@ const getLatestProcessingTime = (processingTimes) => {
   return sortedTimes[0];
 };
 
+const categoryNames = {
+  1: "Visitor visas",
+  2: "Studying and training visas",
+  3: "Family and partner visas",
+  4: "Working and skilled visas",
+  6: "Other visas"
+};
+
 const CategoryDetails = () => {
   const { id } = useParams();
   const [visas, setVisas] = useState([]);
   const [stats, setStats] = useState(null);
-  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [processingTimesResponse, statsResponse, categoriesResponse] = await Promise.all([
+        const [processingTimesResponse, statsResponse] = await Promise.all([
           api.get(`/processing-times/category/${id}`),
           api.get(`/statistics/category/${id}`),
-          api.get(`/categories/${id}/visas`)
         ]);
 
         const mappedVisas = processingTimesResponse.data.map((visa) => ({
           id: visa.visa_type_id,
+          stream_id: visa.stream_id || null,
+          stream_name: visa.stream_name || null,
           collected_at: visa.collected_at,
           visa_name: visa.visa_name,
           stream_name: visa.stream_name,
           percent_90: visa.percent_90,
           code: visa.code, 
+          display_name: visa.stream_name 
+          ? `${visa.visa_name} (${visa.stream_name})`
+          : visa.visa_name
         }));
 
         setVisas(mappedVisas);
         setStats(statsResponse.data);
-        setCategories(categoriesResponse.data)
+       
       } catch (error) {
         console.error('Error fetching:', error);
       }
@@ -59,8 +70,8 @@ const CategoryDetails = () => {
 
 
   const latestProcessingTime = getLatestProcessingTime(visas);
-  const currentCategory = categories.find(category => category.id === Number(id));
-  console.log(categories)
+  const currentCategory = categoryNames[id] || "Category Not Found";
+  console.log(categoryNames[id])
   const formatTitle = (text) => {
     return text
       .replace(/\band\b/gi, "&") 
@@ -69,7 +80,7 @@ const CategoryDetails = () => {
       .join(" ");
   }
 
-  const formattedTitle = currentCategory?.name ? formatTitle(currentCategory.name) : "Category Not Found";
+  const formattedTitle = formatTitle(currentCategory)
 
   return (
     <div className="container mx-0 px-4 mt-16 py-0">
@@ -82,14 +93,14 @@ const CategoryDetails = () => {
     </BreadcrumbItem>
     <BreadcrumbSeparator />
     <BreadcrumbItem>
-      <BreadcrumbPage>{currentCategory?.name}</BreadcrumbPage>
+      <BreadcrumbPage>{currentCategory}</BreadcrumbPage>
     </BreadcrumbItem>
   </BreadcrumbList>
 </Breadcrumb>
 
         <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-semibold dark:text-gray-200">
-        {formattedTitle} Details
+        {formattedTitle} Details 
         </h1>
         <span className="text-sm text-gray-500 dark:text-gray-400">
           Updated on {latestProcessingTime ? new Date(latestProcessingTime.collected_at).toLocaleDateString('en-AU', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
