@@ -11,7 +11,7 @@ import {
 } from "../../components/ui/breadcrumb"
 import HistoryChart from './components/HistoryChart';
 import TimelineList from './components/TimelineList';
-
+import VisaDetailCard from './components/VisaDetailCard';
 
 const VisaDetails = () => {
   const params = useParams();
@@ -60,7 +60,7 @@ const VisaDetails = () => {
   }
 
    const formattedTitleCategory = visaExtraDetails.category_name ? formatTitle(visaExtraDetails.category_name) : "Category Not Found";
-   const currentCategory = formattedTitleCategory;
+   
   const formattedVisaName = visaExtraDetails.visa_name ? formatTitle(visaExtraDetails.visa_name) : "Visa Not Found";
   
   return (
@@ -74,7 +74,7 @@ const VisaDetails = () => {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-          <Link to={`/categories/${visaExtraDetails.category_id}`} className="text-slate-500 hover:text-slate-800">{currentCategory}</Link>
+          <Link to={`/categories/${visaExtraDetails.category_id}`} className="text-slate-500 hover:text-slate-800">{formattedTitleCategory}</Link>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
@@ -85,21 +85,22 @@ const VisaDetails = () => {
 
       <div className="flex justify-between items-center mb-8">
               <h1 className="text-2xl font-semibold dark:text-gray-200">
-              {formattedTitleCategory} Details
+              {formattedTitleCategory} Category Details
               </h1>
               <span className="text-sm text-gray-500 dark:text-gray-400">
                 Updated on {latestProcessingTime ? new Date(latestProcessingTime.collected_at).toLocaleDateString('en-AU', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
               </span>
       </div>
        
-      <h2 className="text-xl font-semibold mb-3 dark:text-gray-200 text-left">Historical Data for {formattedVisaName}</h2>
+
+      <h2 className="text-xl font-semibold mb-3 dark:text-gray-200 text-left">Historical Data for {formattedVisaName} {visaExtraDetails?.stream_name && ` (${visaExtraDetails.stream_name})`}</h2>
       
      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div className="lg:col-span-2">
-        <HistoryChart data={visaTimes} />
+      <HistoryChart data={visaTimes} />
         <div className="mb-12 mt-8 text-left">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 mb-4 ">
-              Interpreting this data {formattedVisaName}
+              Interpreting this data
             </h3>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
               The Australian Government publishes updates to their processing times on a daily basis. However, this estimate is just the average of the processing time taken for <strong>{formattedVisaName}</strong>. The graph shows two main metrics:
@@ -113,7 +114,10 @@ const VisaDetails = () => {
             </p>
         </div>
       </div>
+
+      
       <div>
+      <VisaDetailCard visaDetails={visaExtraDetails} />
         <TimelineList 
           data={visaTimes} 
           visaName={formattedVisaName}
