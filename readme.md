@@ -8,7 +8,7 @@ Beyond its practical use, this project was also an opportunity for me to **pract
 - **Frontend**: HTML, CSS, JavaScript, React.js  
 - **Backend**: Node.js, Express.js  
 - **Database**: PostgreSQL    
-- **Deployment**: Render (Backend & Database) + Vercel (Frontend)
+- **Deployment**: Render (Backend & Database) + Vercel (Frontend) - All hosted in Singapore region.
 
 ## **Features**   
 - **Visa Processing Times**: Check current processing times for multiple Australian visa types.  
