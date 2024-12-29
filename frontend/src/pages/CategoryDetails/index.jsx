@@ -79,11 +79,12 @@ const CategoryDetails = () => {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) 
       .join(" ");
   }
+  
 
   const formattedTitle = formatTitle(currentCategory)
 
   return (
-    <div className="container mx-0 px-4 mt-16 py-0">
+    <div className="!max-w-3xl container mx-0 px-4 mt-16 py-0 ">
 
 <Breadcrumb>
   <BreadcrumbList>
@@ -100,13 +101,13 @@ const CategoryDetails = () => {
 
         <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-semibold dark:text-gray-200">
-        {formattedTitle} Details 
+        {formattedTitle} Details  
         </h1>
+        
         <span className="text-sm text-gray-500 dark:text-gray-400">
           Updated on {latestProcessingTime ? new Date(latestProcessingTime.collected_at).toLocaleDateString('en-AU', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
         </span>
         </div>
-
       <h2 className="text-xl font-semibold mb-3 dark:text-gray-200">Interesting Statistics for This Category</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         <StatisticCard 
@@ -140,6 +141,13 @@ const CategoryDetails = () => {
           description="Typical processing time for 50% of applications" 
         />
       </div>
+      {id === '3' && (
+        <div className="m-5">
+          <p className="text-sm text-gray-700 dark:text-gray-300">
+          * For this category of visas, the Australian Government offers several visas with similar names. Please be aware of this and consider the <strong>subclass code</strong>.
+          </p>
+          </div>
+      )}
       <VisaList visas={visas} />
     </div>
    
