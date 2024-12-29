@@ -5,7 +5,7 @@ Beyond its practical use, this project was also an opportunity for me to **pract
 
 
 ## **Tech Stack** 
-- **Frontend**: HTML, CSS, JavaScript, React.js  
+- **Frontend**: Tailwind, JavaScript, React.js  
 - **Backend**: Node.js, Express.js  
 - **Database**: PostgreSQL    
 - **Deployment**: Render (Backend & Database) + Vercel (Frontend) - All hosted in Singapore region.
