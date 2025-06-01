@@ -1,3 +1,4 @@
+### Discontinued because I was too lazy to move from Render to a platform that hosts PostgreSQL for free. I should’ve built the project using Supabase from the start. 
 ## **Description**  
 The **Australian Visa Tracker** is a powerful web application designed to help users check and analyze processing times for various Australian visa types. While the official Australian government website provides this data, it can be less user-friendly and harder to navigate. This project aims to simplify the process by offering a clean, intuitive interface and advanced features like historical data analysis and visa comparison.
 
