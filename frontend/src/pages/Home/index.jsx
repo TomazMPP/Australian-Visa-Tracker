@@ -50,7 +50,7 @@ const Home = () => {
     <p className="text-center mb-12 dark:text-gray-400 max-w-3xl mx-auto text-lg">
     This is an unofficial website that provides both the latest and historical Australian visa processing times in an accessible format. While the official website also includes historical data, it is less user-friendly and harder to navigate.
     </p>
-    
+    <p className="font-bold">Discontinued cuz of Render Costs. </p>
     <h2 className="text-3xl font-semibold mb-8 dark:text-gray-200">Visa Categories</h2>
     
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
