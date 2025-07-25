@@ -2,6 +2,26 @@ const axios = require('axios');
 const pool = require('./config/db');
 
 const API_URL = 'https://immi.homeaffairs.gov.au/_layouts/15/api/GPT.aspx/GetProcessGuideInfo';
+const REFERER_URL = 'https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-processing-times/global-visa-processing-times';
+
+// Função para obter o request digest token
+async function getRequestDigest() {
+    try {
+        const response = await axios.post('https://immi.homeaffairs.gov.au/_api/contextinfo', '', {
+            headers: {
+                'Accept': 'application/json;odata=verbose',
+                'Content-Type': 'application/json;odata=verbose',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+                'Referer': REFERER_URL
+            }
+        });
+        return response.data.d.GetContextWebInformation.FormDigestValue;
+    } catch (error) {
+        console.error('Error getting request digest:', error);
+        // Fallback - tentar sem digest
+        return null;
+    }
+}
 
 async function getVisaTypesWithStreams() {
     const query = `
@@ -18,18 +38,60 @@ async function getVisaTypesWithStreams() {
 
 async function fetchProcessingTimes(visaCode) {
     try {
-        const response = await axios.post(API_URL, {
+        console.log(`Fetching request digest for visa ${visaCode}...`);
+        const requestDigest = await getRequestDigest();
+        
+        const headers = {
+            'Accept': 'application/json;odata=verbose',
+            'Content-Type': 'application/json;odata=verbose',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+            'Referer': REFERER_URL,
+            'Origin': 'https://immi.homeaffairs.gov.au',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+            'Accept-Encoding': 'gzip, deflate, br, zstd',
+            'sec-ch-ua': '"Not:A-Brand";v="24", "Chromium";v="134"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-origin',
+            'Priority': 'u=1, i'
+        };
+
+        // Adicionar request digest se conseguimos obter
+        if (requestDigest) {
+            headers['X-RequestDigest'] = requestDigest;
+        }
+
+        const payload = {
             gptRequest: {
                 VisaSubclassCode: visaCode
             }
-        }, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
+        };
+
+        console.log(`Making API request for visa ${visaCode}...`);
+        const response = await axios.post(API_URL, payload, {
+            headers: headers,
+            timeout: 30000 // 30 segundos timeout
         });
-        return response.data.d.data;
+        
+        if (response.data && response.data.d && response.data.d.data) {
+            return response.data.d.data;
+        } else {
+            console.warn(`Unexpected response structure for visa ${visaCode}:`, response.data);
+            return null;
+        }
     } catch (error) {
-        console.error(`Error fetching data for visa ${visaCode}:`, error);
+        if (error.response) {
+            console.error(`API error for visa ${visaCode}:`, {
+                status: error.response.status,
+                statusText: error.response.statusText,
+                data: error.response.data
+            });
+        } else {
+            console.error(`Network error for visa ${visaCode}:`, error.message);
+        }
         return null;
     }
 }

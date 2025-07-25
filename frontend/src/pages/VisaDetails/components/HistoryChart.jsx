@@ -11,6 +11,25 @@ import {
  ResponsiveContainer
 } from 'recharts';
 
+// Utility function to calculate moving average
+const calculateMovingAverage = (data, field, windowSize = 7) => {
+  return data.map((item, index) => {
+    if (index < windowSize - 1) {
+      // For early data points, use available data
+      const availableData = data.slice(0, index + 1);
+      const sum = availableData.reduce((acc, curr) => acc + (curr[field] || 0), 0);
+      const validCount = availableData.filter(d => d[field] != null).length;
+      return validCount > 0 ? sum / validCount : null;
+    } else {
+      // For points with enough history, use full window
+      const windowData = data.slice(index - windowSize + 1, index + 1);
+      const sum = windowData.reduce((acc, curr) => acc + (curr[field] || 0), 0);
+      const validCount = windowData.filter(d => d[field] != null).length;
+      return validCount > 0 ? sum / validCount : null;
+    }
+  });
+};
+
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -44,14 +63,24 @@ const CustomTooltip = ({ active, payload, label }) => {
     );
   }
   return null;
- };
- 
- const HistoryChart = ({ data }) => {
-  const formattedData = data.map(item => ({
+};
+
+const HistoryChart = ({ data }) => {
+  // Sort data by date to ensure proper chronological order
+  const sortedData = [...data].sort((a, b) => new Date(a.collected_at) - new Date(b.collected_at));
+  
+  // Calculate moving averages
+  const avg90Values = calculateMovingAverage(sortedData, 'percent_90');
+  const avg50Values = calculateMovingAverage(sortedData, 'percent_50');
+  
+  // Format data with moving averages
+  const formattedData = sortedData.map((item, index) => ({
     ...item,
     collected_at: new Date(item.collected_at).getTime(),
+    avg_90: avg90Values[index],
+    avg_50: avg50Values[index],
   }));
- 
+
   return (
     <div className="w-full h-[400px] mt-4">
       <ResponsiveContainer width="100%" height="100%">
@@ -118,6 +147,7 @@ const CustomTooltip = ({ active, payload, label }) => {
             strokeWidth={1}
             name="90% Average"
             dot={false}
+            connectNulls={false}
           />
           <Line
             type="monotone"
@@ -127,11 +157,12 @@ const CustomTooltip = ({ active, payload, label }) => {
             strokeWidth={1}
             name="50% Average"
             dot={false}
+            connectNulls={false}
           />
         </LineChart>
       </ResponsiveContainer>
     </div>
   );
- };
+};
 
 export default HistoryChart;

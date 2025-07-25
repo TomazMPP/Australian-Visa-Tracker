@@ -8,14 +8,13 @@ const VisaList = ({ visas = [] }) => {
   };
 
   const handleClick = (visa) => {
-    console.log('Clicking visa:', visa); 
-    if (!visa.id) return;
+    if (!visa.code || !visa.id) return;
     const path = visa.stream_id 
-    ? `/visa/${visa.id}/stream/${visa.stream_id}`
-    : `/visa/${visa.id}/stream`; 
-  
-  navigate(path);
-};
+      ? `/visa/${visa.code}/stream/${visa.stream_id}`
+      : `/visa/${visa.code}/stream`; 
+
+    navigate(path, { state: { visaId: visa.id } });
+  };
 
   return (
     <div className="mt-12 px-4 sm:px-6 lg:px-8">
@@ -44,7 +43,7 @@ const VisaList = ({ visas = [] }) => {
 
         {visas.map((visa) => (
           <div
-            key={visa.id}
+            key={`${visa.id}-${visa.stream_id || 'no-stream'}`}
             className="grid grid-cols-[2fr_1fr_1fr] p-2 !gap-0 border-b border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
           >
             <div className="text-left">
@@ -53,20 +52,44 @@ const VisaList = ({ visas = [] }) => {
                 {visa.stream_name && ` (${visa.stream_name})`}
               </span>
               <span className="ml-1 text-xs text-gray-500">(subclass {visa.code})</span>
+              {!visa.percent_90 && !visa.percent_50 && (
+                <div className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                  ⚠️ Processing times not available
+                </div>
+              )}
             </div>
             <div className="text-center">
-              ~ {visa.percent_90 || '-'} days
+              {visa.percent_90 ? `~ ${visa.percent_90} days` : (
+                <span className="text-gray-400 dark:text-gray-500">No data</span>
+              )}
             </div>
             <div className="text-center">
               <button
                 onClick={() => handleClick(visa)}
                 className="w-3/5 hover:text-gray-700 hover:border-gray-700 dark:hover:text-white bg-transparent dark:hover:border-white transition-colors !py-0"
+                disabled={!visa.percent_90 && !visa.percent_50}
               >
-                View
+                {visa.percent_90 || visa.percent_50 ? 'View' : 'N/A'}
               </button>
             </div>
           </div>
         ))}
+        
+        {visas.length === 0 && (
+          <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+            No visa data available for this category.
+          </div>
+        )}
+        
+        {visas.some(visa => !visa.percent_90 && !visa.percent_50) && (
+          <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border-t border-amber-200 dark:border-amber-800">
+            <p className="text-sm text-amber-800 dark:text-amber-200">
+              <strong>Note:</strong> Some visas in this category don't have current processing times available. 
+              This might be because they are processed instantly, rarely used, or the government doesn't publish 
+              processing times for these visa types.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

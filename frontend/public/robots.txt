@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+
+# Important pages
+Allow: /categories/
+Allow: /visa/
+Allow: /donate
+
+# Sitemap location
+Sitemap: https://www.australianvisatracker.com/sitemap.xml
+
+# Crawl delay (optional - helps with server load)
+Crawl-delay: 1
+
+# Block common unwanted bots (optional)
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: / 
